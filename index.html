@@ -69,6 +69,9 @@
   <div class="card-custom">
     <div class="mb-3"><label class="small fw-bold text-muted">Username</label><input type="text" id="loginUsername" class="form-control" placeholder="Ketik username Anda" onkeypress="if(event.key === 'Enter') document.getElementById('loginPassword').focus();"></div>
     <div class="mb-4"><label class="small fw-bold text-muted">Password</label><input type="password" id="loginPassword" class="form-control" placeholder="****" onkeypress="if(event.key === 'Enter') prosesLogin();"></div>
+    
+    <button id="btnInstallApp" class="btn btn-warning w-100 fw-bold mb-3 shadow-sm text-dark" style="display: none;"><i class="bi bi-download me-2"></i>INSTALL APLIKASI (PWA)</button>
+    
     <button onclick="prosesLogin()" class="btn-emerald mb-3">MASUK APLIKASI</button><button onclick="switchScreen('registerScreen')" class="btn-outline-emerald">DAFTAR AKUN BARU</button>
   </div>
 </div>
@@ -792,9 +795,53 @@ function cetakPDFPersonal(jenis) {
     });
   }
 </script>
+  <script>
+  // ==========================================
+  // SIHIR PWA & TOMBOL INSTALL MANUAL
+  // ==========================================
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => console.log('Sihir PWA Berhasil Aktif!'))
+        .catch(err => console.log('PWA Gagal:', err));
+    });
+  }
+
+  let deferredPrompt;
+  
+  window.addEventListener('beforeinstallprompt', (e) => {
+    // Mencegah Chrome memunculkan pop-up otomatis secara paksa
+    e.preventDefault();
+    // Simpan event-nya
+    deferredPrompt = e;
+    
+    // Munculkan tombol Install di layar Login
+    const btnInstall = document.getElementById('btnInstallApp');
+    if(btnInstall) btnInstall.style.display = 'block';
+  });
+
+  // Eksekusi saat tombol Install ditekan
+  document.addEventListener('click', async (e) => {
+    // Mengecek apakah yang diklik adalah tombol Install
+    if(e.target && (e.target.id === 'btnInstallApp' || e.target.closest('#btnInstallApp'))) {
+      if (deferredPrompt !== null) {
+        // Tampilkan pop-up install bawaan HP
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          console.log('User menerima instalasi');
+          // Sembunyikan tombol setelah berhasil diinstal
+          document.getElementById('btnInstallApp').style.display = 'none';
+        }
+        deferredPrompt = null;
+      }
+    }
+  });
+</script>
 </body>
 
 </html>
+
 
 
 
