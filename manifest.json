@@ -1,0 +1,15 @@
+{
+  "name": "SIMPADU Al Muttaqin",
+  "short_name": "SIMPADU",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#10b981",
+  "icons": [
+    {
+      "src": "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
