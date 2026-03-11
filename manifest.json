@@ -1,14 +1,20 @@
 {
   "name": "SIMPADU Al Muttaqin",
   "short_name": "SIMPADU",
-  "start_url": "./",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#f8fafc",
   "theme_color": "#10b981",
   "icons": [
     {
       "src": "logo-sekolah.png",
-      "sizes": "any",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logo-sekolah.png",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     }
