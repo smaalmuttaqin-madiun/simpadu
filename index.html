@@ -671,7 +671,7 @@ function toggleFormJurnal() {
   const wadahKBM = document.getElementById('wadahInputKBM'); const labelMateri = document.getElementById('labelMateri'); const wadahAbsenSiswa = document.getElementById('wadahAbsenSiswa'); const labelFoto = document.getElementById('labelFotoKBM'); const btnSubmit = document.getElementById('btnSubmitJurnal'); const inputFoto = document.getElementById('jurFoto');
 
   if(tNormal) { wadahKBM.style.display = 'block'; labelMateri.innerText = "Materi yang Disampaikan"; wadahAbsenSiswa.style.display = 'block'; labelFoto.innerText = "Bukti Foto KBM (Kamera Langsung)"; inputFoto.setAttribute('capture', 'environment'); if(didalamRadius) { btnSubmit.disabled = false; btnSubmit.innerHTML = "<i class='bi bi-send-fill me-2'></i>KIRIM JURNAL"; } else { btnSubmit.disabled = true; btnSubmit.innerHTML = "<i class='bi bi-lock-fill me-2'></i>DI LUAR SEKOLAH"; } } 
-  else if(tTugas) { wadahKBM.style.display = 'block'; labelMateri.innerText = "Instruksi Tugas yang Diberikan"; wadahAbsenSiswa.style.display = 'block'; labelFoto.innerText = "Screenshot Bukti Chat WA / File Tugas"; inputFoto.removeAttribute('capture'); btnSubmit.disabled = false; btnSubmit.innerHTML = "<i class='bi bi-send-fill me-2'></i>KIRIM JURNAL"; } 
+  else if(tTugas) { wadahKBM.style.display = 'none'; labelMateri.innerText = "Instruksi Tugas yang Diberikan"; wadahAbsenSiswa.style.display = 'block'; labelFoto.innerText = "Screenshot Bukti Chat WA / File Tugas"; inputFoto.removeAttribute('capture'); btnSubmit.disabled = false; btnSubmit.innerHTML = "<i class='bi bi-send-fill me-2'></i>KIRIM JURNAL"; } 
   else if(tKhusus) { wadahKBM.style.display = 'none'; labelMateri.innerText = "Keterangan Laporan / Kegiatan"; wadahAbsenSiswa.style.display = 'none'; labelFoto.innerText = "Foto Bukti Kegiatan (Selfie/Dokumen)"; inputFoto.removeAttribute('capture'); btnSubmit.disabled = false; btnSubmit.innerHTML = "<i class='bi bi-send-fill me-2'></i>KIRIM JURNAL"; } 
 }
 
@@ -679,9 +679,23 @@ function kirimJurnal() {
   const user = JSON.parse(localStorage.getItem('simpadu_user')).username; 
   const tNormal = document.getElementById('jurnalNormal').checked; const tTugas = document.getElementById('jurnalTugas').checked; const tKhusus = document.getElementById('jurnalKhusus').checked; 
   let tipeTugas = "KBM Tatap Muka"; if(tTugas) tipeTugas = "Pemberian Tugas"; if(tKhusus) tipeTugas = "Tugas Khusus"; 
-  let semester = "-", kelas = "-", mapel = "-", jp = 0, siswaAbsen = "-"; 
+  
+  // PERBAIKAN BUG TUGAS KHUSUS MULAI DI SINI
+  let semester = document.getElementById('jurSemester').value || "-"; 
+  let kelas = document.getElementById('jurKelas').value || "-"; 
+  let mapel = document.getElementById('jurMapel').value || "-"; 
+  let jp = document.getElementById('jurJP').value || 0; 
+  let siswaAbsen = "-";
+  
+  if(tNormal || tTugas) {
+      siswaAbsen = document.getElementById('jurSiswaAbsen').value || "-"; 
+  }
 
-  if(!tKhusus) { semester = document.getElementById('jurSemester').value; kelas = document.getElementById('jurKelas').value; mapel = document.getElementById('jurMapel').value; jp = document.getElementById('jurJP').value; if(tNormal || tTugas) siswaAbsen = document.getElementById('jurSiswaAbsen').value || "-"; if(!kelas || !mapel || !jp) return Swal.fire('Oops', 'Lengkapi Kelas, Mapel, dan JP!', 'warning'); } 
+  if(!tKhusus && (!kelas || !mapel || !jp || kelas === "-" || mapel === "-")) { 
+      return Swal.fire('Oops', 'Lengkapi Kelas, Mapel, dan JP!', 'warning'); 
+  }
+  // PERBAIKAN SELESAI
+  
   const materi = document.getElementById('jurMateri').value; if(!materi) return Swal.fire('Oops', 'Lengkapi kolom Keterangan/Materi!', 'warning'); 
   const fileFoto = document.getElementById('jurFoto').files[0]; if(!fileFoto) return Swal.fire('Oops', 'Foto bukti wajib dilampirkan!', 'warning'); 
   if(tNormal && !didalamRadius) return Swal.fire('Ditolak', 'KBM Tatap Muka mewajibkan Anda berada di dalam radius sekolah!', 'error');
@@ -786,16 +800,6 @@ function cetakPDFPersonal(jenis) {
   window.print(); printKertas.style.display = 'none'; appLayar.style.display = 'block'; navBawah.style.display = 'flex';
 }
 </script>
-  <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js')
-        .then(reg => console.log('Sihir PWA Berhasil Aktif!'))
-        .catch(err => console.log('PWA Gagal:', err));
-    });
-  }
-</script>
-  </script>
 
 <script>
   // ==========================================
@@ -842,11 +846,3 @@ function cetakPDFPersonal(jenis) {
 </script>
 </body>
 </html>
-</body>
-
-</html>
-
-
-
-
-
